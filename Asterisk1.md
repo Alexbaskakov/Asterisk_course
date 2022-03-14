@@ -253,18 +253,26 @@ H.323 описывает несколько типов устройств:
 *Рис 1.4. Настройка окна установщика*
 
 3.	Выберите тип и версию гостевой ОС (если в вашей версии доступен на выбор CentOS 8 или Red Hat Enterprise Linux 8 – укажите его, если нет – CentOS 7) (Рисунок 1.5).
+4.
 ![equation](https://raw.githubusercontent.com/Alexbaskakov/Asterisk_course/main/jpg/ast1.5.png)
+
 *Рис 1.5. Настройка типа и версии гостевой ОС*
 
 4.	Укажите имя (рекомендуется отобразить в имени принадлежность ВМ к студенту) и папку сохранения для ВМ (рекомендуется сохранить на диск D: или F:) (Рисунок 1.6).
+5.
 ![equation](https://raw.githubusercontent.com/Alexbaskakov/Asterisk_course/main/jpg/ast1.6.png)
+
 *Рис 1.6. Настройка имени виртуальной машины*
 
 5.	Укажите параметры диска для ВМ (объем 20 ГБ) (Рисунок 1.7).
+6.
 ![eq uation](https://raw.githubusercontent.com/Alexbaskakov/Asterisk_course/main/jpg/ast1.7.png)
+
 *Рис 1.7. Настройка параметров диска*
 6.	Нажмите Customize Hardware… Выделите для ВМ 1 ГБ оперативной памяти (Memory), 4 ядра процессора (Processors), в New CD/DVD выберите Use ISO image file и нажав Browse, укажите путь к сохраненному ранее образу CentOS (Рисунок 1.8).
+7.
 ![equation](https://raw.githubusercontent.com/Alexbaskakov/Asterisk_course/main/jpg/ast1.8.png)
+
 *Рис 1.8. Настройка параметров ВМ*
 
 Выделенных ресурсов хватит для тестовой установки и эксплуатации CentOS без графического окружения с Asterisk, обслуживающим до 10 клиентов. Нажмите Close и потом Finish.
@@ -273,31 +281,39 @@ H.323 описывает несколько типов устройств:
 
 ## 1.8. Установка CentOS 8
 1.	При появлении меню загрузки, как показано на рисунке, выберите пункт Install CentOS... чтобы начать установку CentOS 8 (Рисунок 1.9).
-2.
+
 ![equation](https://raw.githubusercontent.com/Alexbaskakov/Asterisk_course/main/jpg/ast1.9.png)
+
 *Рис 1.9. Установка CentOS 8*
 
 2.	Выберите язык системы (настоятельно рекомендуется оставить английский English (United States)) и нажмите Continue (Рисунок 1.10).
+3.
 ![equation](https://raw.githubusercontent.com/Alexbaskakov/Asterisk_course/main/jpg/ast1.10.png)
+
 *Рис 1.10. Выбор языка системы*
 
 3.	В появившемся окне параметров установки перейдите в Time&Date, выберите корректный часовой пояс, нажмите Done (Рисунок 1.11).
+4.
 ![equation](https://raw.githubusercontent.com/Alexbaskakov/Asterisk_course/main/jpg/ast1.11.png)
+
 *Рис 1.11. Настройка параметра часового пояса*
 
 4.	Перейдите в Software Selection и выберите подходящее базовое окружение – Minimal Install (в целом, опция Minimal Install вполне подходит для большинства случаев развертывания, установка Asterisk – в их числе) (Рисунок 1.12).
 
 ![equation](https://raw.githubusercontent.com/Alexbaskakov/Asterisk_course/main/jpg/ast1.12.png)
+
 *Рис 1.12. Настройка базового окружения*
 
 5.	Откройте пункт Installation Destination и нажмите Done для автоматической разметки диска.
 6.	Перейдите в пункт Network & Host name. Включите доступные сетевые интерфейсы Ethernet (и проверьте, что им присваивается IP-адрес). В поле Host Name внизу задайте произвольно имя хоста (это имя будет установлено в ОС как имя системы) и нажмите Apply. Если текущее имя изменено, адрес успешно получен, нажмите Done (Рисунок 1.13).
 
 ![equation](https://raw.githubusercontent.com/Alexbaskakov/Asterisk_course/main/jpg/1.13.png)
+
 *Рис 1.13. Настройка используемого хоста*
 
 7.	Нажмите Begin Installation чтобы начать установку. В Root Password задайте пароль пользователю root (На данном этапе возможно задать простой короткий пароль путем двойного нажатия Done). Создайте своего пользователя (User Creation) с любым удобным именем (в поле Full name можно использовать прописные буквы и длинное имя, поле User name содержит логин, под которым авторизуется пользователь, он должен быть достаточно короток и не должен содержать прописных букв. Обязательно отметьте пункт Make this user administrator для добавления пользователя в соответствующую группу администраторов (wheel). На данном этапе также возможно аналогично задать простой короткий пароль (Рисунок 1.14).
 ![equation](https://raw.githubusercontent.com/Alexbaskakov/Asterisk_course/main/jpg/1.14.png)
+
 *Рис 1.14. Настройка параметров пользователя*
 
 8.	По окончанию установки нажмите Reboot. ВМ перезагрузится и загрузится с виртуального диска со свежеустановленной CentOS.
@@ -349,13 +365,14 @@ H.323 описывает несколько типов устройств:
 `sudo vi /etc/yum.conf`
 
 ![equation](https://raw.githubusercontent.com/Alexbaskakov/Asterisk_course/main/jpg/1.16.png)
+
 *Рис 1.16. Ошибка при подключении пользователя*
 
 Если Вы получили такой вывод в терминале, значит Ваш пользователь при установке не был добавлен в группу администраторов (пользователей с привилегиями sudo). Следует под пользователем root добавить его в группу пользователей sudo (wheel)  вручную командой `usermod -aG wheel username` (Рисунок 1.17).
 
 ![equation](https://raw.githubusercontent.com/Alexbaskakov/Asterisk_course/main/jpg/1.17.png)
 
-Рис 1.17. Добавление пользователя в группу администраторов
+*Рис 1.17. Добавление пользователя в группу администраторов*
 
 Команда **su** переключает сессию текущего пользователя на суперпользователя **root**, поэтому пароль необходимо вводить от учетной записи root.
 

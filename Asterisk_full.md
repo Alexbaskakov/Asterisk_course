@@ -1960,7 +1960,7 @@ $cfg['blowfish_secret'] = 'generated_symbols';
 
 *Рис 3.14. Настройки параметров представления*
 
-Ниже вставьте *SELECT id, callerid, aors, auth, context, transport, disallow, allow, direct_media FROM `ps_endpoints`* Нажмите Format, для форматирования кода (так выглядит эталонная запись запросов на SQL).
+Ниже вставьте *SELECT id, callerid, aors, auth, context, transport, disallow, allow, direct_media FROM \`ps_endpoints\`* Нажмите Format, для форматирования кода (так выглядит эталонная запись запросов на SQL).
 
 Нажмите вперёд, после этого слева, в новом разделе для asteriskdb - Представления (Views) выберите представление ps_endpoints_view. Убедитесь, что в таблице отображается запись со всеми настроенными параметрами из раздела endpoints.
 

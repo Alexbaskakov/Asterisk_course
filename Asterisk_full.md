@@ -2001,7 +2001,7 @@ $cfg['blowfish_secret'] = 'generated_symbols';
 
 Добавление данных об экстеншенах в таблицу extensions:
 
-> INSERT INTO extensions VALUES (1, 'outcall', '_1XXX', '1', 'DIAL', 'PJSIP/${EXTEN}';
+> INSERT INTO extensions VALUES (1, 'outcall', '_1XXX', '1', 'DIAL', 'PJSIP/${EXTEN}');
 
 Не забудьте выбрать базу asteriskdb, в интерфейсе СУБД.
 

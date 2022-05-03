@@ -1895,9 +1895,7 @@ server {
 
         fastcgi_index index.php;
 
-fastcgi_param SCRIPT_FILENAME
-
-$document_root$fastcgi_script_name;
+	fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 
         fastcgi_param QUERY_STRING  $query_string;
 

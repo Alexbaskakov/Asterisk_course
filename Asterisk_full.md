@@ -850,36 +850,36 @@ sudo rm /etc/asterisk/pjsip.conf
 Ниже приведен пример простейшего плана набора (реализует обработку звонков на любые трехзначные номера) в контексте *default*, который должен быть, сохранен в файле */etc/asterisk/extensions.conf*
 
 ```
-*[default]*
+[default]
 
-*exten => _XXX,1,Dial(PJSIP/${EXTEN})*
+exten => _XXX,1,Dial(PJSIP/${EXTEN})
 ```
 
 Теперь рассмотрим реализацию простого голосового меню с подробным описанием процесса маршрутизации и обработки вызовов.
 
 ```
-*[internal]*
+[internal]
 
-*exten => 1234,1,GoTo(ivr,s,1)*
+exten => 1234,1,GoTo(ivr,s,1)
 
-*[ivr]*
+[ivr]
 
-*exten => s,1,Answer()*
+exten => s,1,Answer()
 
- *same => n,Playback(hello)*
+ same => n,Playback(hello)
 
-*same => n,Background(basic-pbx-ivr-main)*
+same => n,Background(basic-pbx-ivr-main)
 
- *same => n,Playback(demo-thanks)*
+ same => n,Playback(demo-thanks)
 
 
-*exten => 1,1,GoTo(1-otd,s,1)*
+exten => 1,1,GoTo(1-otd,s,1)
 
-*[1-otd]*
+[1-otd]
 
-*exten => s,1,Background(one-moment-please)*
+exten => s,1,Background(one-moment-please)
 
-*same => n,GoTo(ivr,s,4)*
+same => n,GoTo(ivr,s,4)
 ```
 
 
@@ -2358,7 +2358,7 @@ server {
 
 Для доступа к порту 443 потребуется добавить его в список разрешенных:
 
- > sudo systemctl firewall-cmd --add-service=https --permanent
+``` sudo firewall-cmd --add-service=https --permanent ```
 
 Зайдите на веб-интерфейс phpMyAdmin. Браузер должен предупредить об угрозе безопасности вследствие недоверенного издателя сертификата. На данном этапе игнорируйте это предупреждение.
 

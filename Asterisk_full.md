@@ -455,8 +455,17 @@ sudo vi /etc/yum.conf
 
 В репозиториях, которые включены в CentOS по умолчанию (Base, AppStream, Extras) доступны далеко не все пакеты, кроме того, большинство представлено устаревшими версиями (например, MariaDB, PHP). Некоторые из требуемых в данной работе пакетов доступны в репозитории EPEL (или Extra Packages for Enterprise Linux). Если один и тот же пакет находится в нескольких репозиториях, yum (если не указана желаемая версия и не сконфигурирован репозиторий по умолчанию для пакета) установит самую последнюю версию. Чтобы добавить репозиторий EPEL в список активных репозиториев, достаточно установить пакет epel–release из базового репозитория CentOS. Добавьте репозиторий EPEL:
 ```
-*sudo yum install epel–release*
+sudo yum install epel–release
 ```
+В зависимости от используемого дистрибутива операционной системы могут быть замечены некоторые ошибки в работе пакетного менеджера yum, например, ошибка типа "Failed to synchronize cache for repo appstream". Указанную проблему можно решить последовательным выполнением сделующих команд, при выполнении последней следует отказаться от обновление пакетов нажатием кнопки "n":
+
+```
+sudo cd /etc/yum.repos.d/
+sudo sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+sudo sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+sudo yum update
+```
+
 *По умолчанию yum автоматически НЕ устанавливает пакеты, только проверяет их наличие в активных репозиториях, составляет список всех зависимых пакетов для установки, подсчитывает объем загружаемых файлов, требуемое место на диске для установки и спрашивает, следует ли установить их (см. рисунок ниже). На вопросы об установке пакетов и обновлении GPG-ключей репозиториев (Is this ok?) следует ответить y (Рисунок 1.18).*
 
 ![picture](./images/Снимок18.PNG)
@@ -492,7 +501,7 @@ Security-Enhanced Linux – дополнительная система безо
 
 Выключить SELinux немедленно до перезагрузки системы можно так:
 ```
-sudo setenforce 0*
+sudo setenforce 0
 ```
 
 
@@ -1936,11 +1945,11 @@ $cfg['blowfish_secret'] = 'generated_symbols';
 ```
 
 Перезапустите службы для принятия изменений конфигурации:
+```
+sudo systemctl restart php-fpm
 
->sudo systemctl restart php-fpm
-
->sudo systemctl restart nginx
-
+sudo systemctl restart nginx
+```
 
 ### 3.10. Работа в интерфейсе phpMyAdmin
 
@@ -2070,18 +2079,20 @@ INSERT INTO `iaxfriends` (`id`, `name`, `type`,  `secret`, `context`, `host`, `t
 
 Далее для успешного прохождения сетевого трафика нужно разрешить его в firewalld:
 
-> sudo firewall-cmd --add-port=30000/tcp --permanent
-
+```
+sudo firewall-cmd --add-port=30000/tcp --permanent
+```
 Перезапустите демон sshd и перечитайте правила  firewalld без разрыва текущего соединения:
 
->sudo systemctl restart sshd && sudo firewall-cmd --reload
-
+```
+sudo systemctl restart sshd && sudo firewall-cmd --reload
+```
 Существующее соединение SSH не будет разорвано, но все новые соединения будут приниматься только по новому порту. Проверьте возможность подключения, в PuTTY в поле Port смените 22 на 30000.
 
 Если SSH сервер успешно принимает подключения, закройте 22 порт в firewalld:
-
->sudo firewall-cmd --permanent --remove-service=ssh
-
+```
+sudo firewall-cmd --permanent --remove-service=ssh
+```
 *Не забудьте, что теперь подключение клиента SCP также осуществляется на новый порт.*
 
 ### 4.3. Защита сервера с помощью fail2ban
@@ -2089,9 +2100,9 @@ INSERT INTO `iaxfriends` (`id`, `name`, `type`,  `secret`, `context`, `host`, `t
 Fail2ban – утилита, отслеживающая в логах разных служб определенные события и при происшествии их определенного количества за определенное время выполняющая указанные в конфигурации действия. Используется для защиты от подбора учетных данных (атак типа bruteforce) и атак типа DoS. может отслеживать неудачные попытки подключения на указанных в конфигурации сервисах и портах и соответственно временно создавать блокирующее правило для отбрасывания трафика с IP адреса.
 
 Установите пакет:
-
->sudo yum install fail2ban-firewalld
-
+```
+sudo yum install fail2ban-firewalld
+```
 Базовая настройка параметров блокирования содержатся в файле */etc/fail2ban/jail.d/00-firewalld.conf:*
 ```
 [DEFAULT]
@@ -2154,9 +2165,9 @@ fail2ban-client status
 fail2ban-client status ssh
 ```
 **Пример.** Удалить из списка заблокированных клиентов для сервиса asterisk все адреса из подсети 192.168.0.0/16:
-
-    >sudo fail2ban-client set asterisk unbanip 192.168.*
-
+```
+sudo fail2ban-client set asterisk unbanip 192.168.*
+```
 
 ### 4.4. Настройка аутентификации SSH по ключу
 
@@ -2170,34 +2181,34 @@ fail2ban-client status ssh
 Традиционно для SSH используется криптоалгоритм RSA, но в последнее время в OpenSSH по умолчанию используются криптоалгоритмы, основанные на вычислениях по эллиптических кривым Монтгомери – Curve25519 (обмен ключами) и Эдвардса – EdDSA (генерация ключей).  Наиболее распространенный вариант реализации EdDSA, Ed25519 обеспечивает лучшую безопасность по сравнению с RSA при меньшей длине ключа, что также означает и большую производительность при генерации пар ключей. Из недостатков стоит отметить, что, к сожалению, нельзя использовать открытый ключ Ed25519 для шифрования/подписи файлов, как в случае с открытым ключом RSA.
 
 Далее Вам предлагается настроить в рамках работы аутентификацию SSH по ключу без парольной фразы. Сгенерируйте новый ключ командой (после ключа С подставьте произвольный комментарий, обычно он поясняет принадлежность ключа):
-
->ssh-keygen -t ed25519 -C "pbx server"
-
+```
+ssh-keygen -t ed25519 -C "pbx server"
+```
 Не заполняйте (оставьте значения по умолчанию) запрашиваемые параметры, место сохранения и парольную фразу (passphrase) во время процесса генерации пары ключей.
 
 Убедитесь, что оба ключа сгенерированы (есть файлы id_ed25519 id_ed25519.pub в директории ~/.ssh)
 
 Просмотр приватного ключа:
-
->cat ~/.ssh/id_ed25519
-
+```
+cat ~/.ssh/id_ed25519
+```
 Просмотр публичного ключа:
-
->cat ~/.ssh/id_ed25519.pub
-
+```
+cat ~/.ssh/id_ed25519.pub
+```
 Для разрешения использовать данную пару ключей для аутентификации необходимо создать файл ~/.ssh/authorized_keys и скопировать в него данные публичного ключа (вывод команды cat ~/.ssh/id_ed25519.pub).
 
 Для работоспособности аутентификации SSH по ключу требуется также обеспечить корректные права доступа на директорию и файл с публичными ключами:
+```
+chmod 700 ~/.ssh
 
->chmod 700 ~/.ssh
-
->chmod 700 ~/.ssh/authorized_keys
-
+chmod 700 ~/.ssh/authorized_keys
+```
 
 Перезапустите демон OpenSSH:
-
->sudo systemctl restart sshd
-
+```
+sudo systemctl restart sshd
+```
 Для следующего шага потребуется перенести файл приватного ключа на компьютер, с которого осуществляются подключения. Можно просто скопировать все содержимое из вывода файла приватного ключа в новый файл, но в рамках данной работы будет полезно показать, как можно передавать файлы по сети. Чтобы сделать это, воспользуемся протоколом SCP и непосредственно программой WinSCP в качестве клиента.
 
 Загрузите на свой компьютер файл id_ed25519 из .ssh/. Формат файлов ключей, используемый OpenSSH, не подходит для PuTTY, поэтому сначала полученный приватный ключ придется сконвертировать в используемый PuTTY формат ppk. Запустите программу PuTTYgen, выберите Conversions – Import key, укажите файл с приватным ключом, нажмите Save private key, согласитесь на сохранение приватного ключа без парольной фразы, укажите размещение файла с приватным ключом в формате ppk, который будет использовать PuTTy для аутентификации (Рисунок 4.1).
@@ -2236,66 +2247,68 @@ fail2ban-client status ssh
 
 Создайте каталог, в котором будете хранить сертификаты и ключи:
 
-> mkdir ~/ca && cd ~/ca
-
+```
+mkdir ~/ca && cd ~/ca
+```
 *В рамках данной работы мы храним сертификаты и ключи в домашней директории пользователя, но стоит отметить, что для реального CA правильнее будет хранить сертификаты и ключи в специально существующих для этого директориях /etc/pki/tls/certs:*
 
 > /etc/pki/tls/private.
 
->umask 077
-
+```
+umask 077
+```
 Сгенерируйте защищенный приватный ключ будущего CA длиной 4096 бит c помощью следующей команды:
 
-> openssl genrsa -aes256 -out rootCA.key 4096
-
+```openssl genrsa -aes256 -out rootCA.key 4096
+```
 Затем выпустите самоподписанный корневой сертификат с указанными после ключа subj параметрами (в CN вместо voip.local можете подставить hostname CentOS) с помощью следующей команды:
 
->openssl req -new -x509 -key rootCA.key -sha256 -days
-
+```openssl req -new -x509 -key rootCA.key -sha256 -days
+```
 > 10000 -out rootCA.crt -subj '/C=RU/ST=Moscow/L=Zelenograd/O=MIET/OU=TCS/CN=voip.local CA'
 
 Добавьте созданный корневой сертификат в список доверенных центров сертификации, для этого скопируйте его в директорию для доверенных сертификатов CA и обновите список доверенных CA:
 
->sudo cp ca/rootCA.crt /etc/pki/ca-trust/source/anchors/rootCA.crt
+```sudo cp ca/rootCA.crt /etc/pki/ca-trust/source/anchors/rootCA.crt
 
->sudo update-ca-trust
-
+sudo update-ca-trust
+```
 Сгенерируйте ключ для клиентского сертификата:
 
->openssl genrsa -out pma.key 2048
-
+```openssl genrsa -out pma.key 2048
+```
 Сгенерируйте запрос на подпись сертификата с указанием параметров (в CN подставьте IP адрес CentOS):
 
-> openssl req -new -key pma.key -out pma.csr -subj '/C=RU/ST=Moscow/L=Zelenograd/O=MIET/OU=TCS/CN=IP_address'
-
+```openssl req -new -key pma.key -out pma.csr -subj '/C=RU/ST=Moscow/L=Zelenograd/O=MIET/OU=TCS/CN=IP_address'
+```
 Выпустите сертификат согласно запросу, подписав его ранее выпущенным сертификатом CA:
 
->openssl x509 -req -in pma.csr -days 365 -CA rootCA.crt -CAkey rootCA.key -CAcreateserial -out pma.crt
-
+```openssl x509 -req -in pma.csr -days 365 -CA rootCA.crt -CAkey rootCA.key -CAcreateserial -out pma.crt
+```
 Посмотреть данные сертификата:
 
-> openssl x509 -text -noout -in pma.crt
-
+```openssl x509 -text -noout -in pma.crt
+```
 Проверка, что сертификат действительно выпущен указанным CA:
 
->openssl verify -verbose -CAfile rootCA.crt pma.crt
-
+```openssl verify -verbose -CAfile rootCA.crt pma.crt
+```
 	*Если бы сертификат был выдан промежуточным центром, то пришлось бы добавить данные о сертификатах всех промежуточных центров, чтобы сервер отсылал клиенту корректные данные о цепочке сертификатов.*
 
 Создайте каталог для сертификатов SSL, используемых NGINX:
 
->sudo mkdir /etc/nginx/ssl/
-
+```sudo mkdir /etc/nginx/ssl/
+```
 Скопируйте сертификаты, предназначенные для phpmyadmin в созданную директорию:
 
-> sudo cp ~/ca/pma.key /etc/nginx/ssl/ && sudo cp ~/ca/pma.crt /etc/nginx/ssl/
-
+```sudo cp ~/ca/pma.key /etc/nginx/ssl/ && sudo cp ~/ca/pma.crt /etc/nginx/ssl/
+```
 Сгенерируйте файл параметров алгоритма обмена ключами Диффи-Хеллмана для усиления стойкости используемых шифров и использования forward secrecy. Эта технология позволяет уменьшить возможный ущерб при компрометации ключа путем генерации отдельного ключа для каждой сессии (а не использовать один общий ключ).
 
-> openssl dhparam -out /etc/nginx/ssl/dhparam.pem 2048
-
+```openssl dhparam -out /etc/nginx/ssl/dhparam.pem 2048
+```
 В файле конфигурации для сайта phpMyAdmin секцию server  приведите к следующему виду:
-
+```
 server {
 
     listen       443 ssl http2;
@@ -2329,9 +2342,9 @@ server {
         include fastcgi_params;
     }
 
-
+```
 В начало того же файла с конфигурацией для сайта phpMyAdmin добавьте еще одну секцию server для перенаправления всех запросов от клиентов с порта 80 (HTTP) на 443 порт (HTTPS).
-
+```
 server {
 
         listen 80;
@@ -2341,15 +2354,15 @@ server {
         }
     }
 
-
+```
 Проверьте корректность файла конфигурации sudo nginx -t.
 Перезапустите NGINX sudo systemctl restart nginx.
 
 
 Теперь покажем, как можно проверить работоспособность сервера, использующего SSL/TLS с помощью OpenSSL клиента, это также полезно использовать при устранении ошибок/неисправностей:
 
->openssl s_client -host localhost -port 443
-
+```openssl s_client -host localhost -port 443
+```
 При работоспособном HTTPS сервере верхняя часть вывода должна выглядеть подобно приведенному ниже, указано состояние (CONNECTED), отображена цепочка сертификации и результаты проверки валидности сертификатов (возврат 1 означает успешное прохождение) (Рисунок 4.4):
 
 ![picture](./images/Снимок44.PNG)
@@ -2370,12 +2383,12 @@ server {
 
 Для использования базовой аутентификации с NGINX, необходимо установить пакет htpasswd для создания хэшированных скрытых одноименных файлов, содержащих имена пользователей и пароли. Пакет входит в состав утилит для веб-сервера Apache и устанавливается следующей командой:
 
->sudo yum install httpd-tools
-
+```sudo yum install httpd-tools
+```
 Создайте пользователя developer (после ввода данной команды система запросит ввод пароля для этого нового пользователя, его задайте самостоятельно):
 
-> sudo htpasswd -c /etc/nginx/conf.d/.htpasswd developer
-
+```sudo htpasswd -c /etc/nginx/conf.d/.htpasswd developer
+```
 Теперь осталось только указать NGINX, для каких сайтов/локаций требуется использовать созданный файл. Вставьте следующие строки в локацию, соответствующую phpMyAdmin внутри секции server для 443 порта:
 
 auth_basic
@@ -2394,6 +2407,7 @@ auth_basic_user_file
 Сгенерируйте ключ и сертификат для сервера Asterisk, в CN вместо IP_addr подставьте IP адрес CentOS
 
 ***
+```
 cd ~/ca
 
 openssl genrsa -out asterisk.key 2048
@@ -2401,31 +2415,34 @@ openssl genrsa -out asterisk.key 2048
 openssl req -new -key asterisk.key -out asterisk.csr -subj '/C=RU/ST=Moscow/L=Zelenograd/O=MIET/OU=TCS/CN=IP_addr'
 
 openssl x509 -req -in asterisk.csr -days 365 -CA rootCA.crt -CAkey rootCA.key -CAcreateserial -out asterisk.crt
+```
 ***
 
 Сгенерируйте ключ и сертификат для SIP-клиента с номером XXXX (подставьте существующий в Вашей конфигурации номер), он будет подписан не корневым сертификатом, а сертификатом, выданным для Asterisk.
 
 ***
+```
 openssl genrsa -out clientXXXX.key 2048
 
 openssl req -new -key clientXXXX.key -out clientXXXX.csr -subj '/C=RU/ST=Moscow/L=Zelenograd/O=MIET/OU=TCS/CN=XXXX'
 
 openssl x509 -req -in clientXXXX.csr -days 365 -CA asterisk.crt -CAkey asterisk.key -CAcreateserial -out clientXXXX.crt
+```
 ***
 
 **Задание.** Сгенерируйте таким образом сертификат для каждого клиента.
 
 Создайте директорию для хранения ключей и сертификатов Asterisk:
 
-> sudo mkdir /etc/asterisk/keys && umask 277 /etc/asterisk/keys
-
+```sudo mkdir /etc/asterisk/keys && umask 277 /etc/asterisk/keys
+```
 Скопируйте в эту директорию ключ и сертификат для Asterisk и клиента.
 
 Установите владельца директории и файлов на asterisk:
 
 
-> sudo chown -R asterisk.asterisk /etc/asterisk/keys
-
+```sudo chown -R asterisk.asterisk /etc/asterisk/keys
+```
 Для возможности клиентам использовать SIPS и SRTP, необходимо внести изменения в конфигурацию PJSIP. Для каждого клиента, описанного в таблице ps_endpoints БД asteriskdb значение параметра transport, измените на tls-transport, добавьте параметры со следующими значениями (Табл. 4.1).
 
 ![picture](./images/табл41.PNG)
@@ -2434,6 +2451,7 @@ openssl x509 -req -in clientXXXX.csr -days 365 -CA asterisk.crt -CAkey asterisk.
 
 Добавьте новую секцию tls-transport в начало файла /etc/asterisk.pjsip.conf
 
+```
 [tls-transport]
 
 type=transport
@@ -2454,7 +2472,7 @@ method=tlsv1
 
 allow_reload=true
 
-
+```
 ***
 
 Перезапустите службу Asterisk для применения настроек нового транспорта.

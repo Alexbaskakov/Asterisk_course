@@ -2373,7 +2373,11 @@ openssl s_client -host localhost -port 443
 
 Для доступа к порту 443 потребуется добавить его в список разрешенных:
 
-``` sudo firewall-cmd --add-service=https --permanent ```
+```
+
+sudo firewall-cmd --add-service=https --permanent
+
+```
 
 Зайдите на веб-интерфейс phpMyAdmin. Браузер должен предупредить об угрозе безопасности вследствие недоверенного издателя сертификата. На данном этапе игнорируйте это предупреждение.
 
@@ -2385,11 +2389,13 @@ openssl s_client -host localhost -port 443
 
 Для использования базовой аутентификации с NGINX, необходимо установить пакет htpasswd для создания хэшированных скрытых одноименных файлов, содержащих имена пользователей и пароли. Пакет входит в состав утилит для веб-сервера Apache и устанавливается следующей командой:
 
-```sudo yum install httpd-tools
+```
+sudo yum install httpd-tools
 ```
 Создайте пользователя developer (после ввода данной команды система запросит ввод пароля для этого нового пользователя, его задайте самостоятельно):
 
-```sudo htpasswd -c /etc/nginx/conf.d/.htpasswd developer
+```
+sudo htpasswd -c /etc/nginx/conf.d/.htpasswd developer
 ```
 Теперь осталось только указать NGINX, для каких сайтов/локаций требуется использовать созданный файл. Вставьте следующие строки в локацию, соответствующую phpMyAdmin внутри секции server для 443 порта:
 
@@ -2436,14 +2442,16 @@ openssl x509 -req -in clientXXXX.csr -days 365 -CA asterisk.crt -CAkey asterisk.
 
 Создайте директорию для хранения ключей и сертификатов Asterisk:
 
-```sudo mkdir /etc/asterisk/keys && umask 277 /etc/asterisk/keys
+```
+sudo mkdir /etc/asterisk/keys && umask 277 /etc/asterisk/keys
 ```
 Скопируйте в эту директорию ключ и сертификат для Asterisk и клиента.
 
 Установите владельца директории и файлов на asterisk:
 
 
-```sudo chown -R asterisk.asterisk /etc/asterisk/keys
+```
+sudo chown -R asterisk.asterisk /etc/asterisk/keys
 ```
 Для возможности клиентам использовать SIPS и SRTP, необходимо внести изменения в конфигурацию PJSIP. Для каждого клиента, описанного в таблице ps_endpoints БД asteriskdb значение параметра transport, измените на tls-transport, добавьте параметры со следующими значениями (Табл. 4.1).
 

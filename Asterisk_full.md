@@ -830,11 +830,13 @@ noload => res_pjsip_phoneprov_provider
 ```
 
 Если на предыдущем шаге Asterisk успешно запустился, можно запустить Asterisk как фоновую службу с автозапуском на старте ОС:
-```sudo systemctl enable asterisk && sudo systemctl start asterisk
+```
+sudo systemctl enable asterisk && sudo systemctl start asterisk
 ```
 Проверьте, что Asterisk корректно запущен в виде фоновой службы:
 
-```sudo systemctl status asterisk
+```
+sudo systemctl status asterisk
 ```
 
 Если служба корректно запущена и работает, в выводе должно быть указано active (running) (Рисунок 2.5).
@@ -844,13 +846,16 @@ noload => res_pjsip_phoneprov_provider
 *Рис 2.5. Проверка корректного запуска Asterisk*
 
 Если получено иное, перезапустите службу и еще раз проверьте статус:
-```sudo systemctl restart asterisk
 ```
-```sudo systemctl status asterisk
+sudo systemctl restart asterisk
+```
+```
+sudo systemctl status asterisk
 ```
 
 Проверьте возможность подключения к интерфейсу CLI Asterisk:
-```sudo asterisk -vvvr
+```
+sudo asterisk -vvvr
 ```
 
 Подключаться к Asterisk Вам потребуется позже при отладке конфигурации, пока что выйдите обратно в bash.
@@ -868,7 +873,8 @@ noload => res_pjsip_phoneprov_provider
 
 
 После внесения изменений в любой конфигурационный файл Asterisk, служба Asterisk должна быть перезапущена для применения изменений!!!
-```sudo systemctl restart asterisk
+```
+sudo systemctl restart asterisk
 ```
 Удалите файлы конфигурации, созданные по умолчанию:
 ```

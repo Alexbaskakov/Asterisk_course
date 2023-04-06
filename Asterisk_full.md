@@ -596,6 +596,11 @@ sudo yum install openssl openssl-devel libsrtp libsrtp-devel doxygen -y
 ```
 
 Установка требуемых для Asterisk зависимостей из репозиториев (набор пакетов приведён для конфигурации, необходимой в данной работе; некоторые ненужные в данном курсе модули Asterisk будут недоступны при сборке):
+**UPD (2023)**: Чтобы команда корректно сработала и пакет `sox` смог установиться, нужно предварительно установить epel более старой версии, сделать это можно выполнив команду 
+```
+sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+```
+После этого можно устанавливать основные пакеты:
 ```
 sudo yum install libedit-devel jansson-devel uuid libuuid-devel sqlite-devel libxml2-devel libcurl-devel xmlstarlet bison flex  neon-devel lua-devel uriparser-devel libxslt-devel unixODBC unixODBC-devel bluez-libs-devel radcli-devel freetds-devel  newt-devel popt-devel libical-devel spandsp-devel codec2-devel fftw-devel libsndfile-devel unbound-devel binutils-devel gsm-devel zlib-devel libtool bzip2 patch sox redhat-rpm-config kernel-devel
 ```
